@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Header from './Header';
 import Book from './Book';
 
 const booksData = [
@@ -21,7 +20,6 @@ function BrowseBooks() {
 
   return (
     <div className="bg-black min-h-screen text-white">
-      <Header />
 
       {/* Search Inputs */}
       <div className="flex gap-4 my-6 px-6">

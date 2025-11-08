@@ -6,6 +6,8 @@ function Header() {
     <header className="bg-black border-b border-yellow-500 shadow-[0_2px_10px_rgba(255,215,0,0.15)]">
       <nav className="flex justify-between items-center px-8 py-4">
         {/* Logo Section */}
+        <Link to='/'>
+
         <div className="flex items-center gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -20,6 +22,9 @@ function Header() {
           </h1>
         </div>
 
+        </Link>
+        
+
         {/* Navigation Links */}
         <ul className="flex gap-8 text-white font-medium">
           <li>
@@ -32,7 +37,7 @@ function Header() {
           </li>
           <li>
             <Link
-              to="/browse"
+              to="/browsebooks"
               className="hover:text-yellow-400 transition-colors duration-300"
             >
               Browse Books
