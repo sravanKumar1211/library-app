@@ -1,60 +1,99 @@
-import React, { useState } from 'react';
-import Book from './Book';
-
-const booksData = [
-  { id: 1, name: 'Dune', category: 'Sci-Fi', author: 'Frank Herbert' },
-  { id: 2, name: '1984', category: 'Fiction', author: 'George Orwell' },
-  { id: 3, name: 'Foundation', category: 'Sci-Fi', author: 'Isaac Asimov' },
-  { id: 4, name: 'Pride and Prejudice', category: 'Fiction', author: 'Jane Austen' },
-];
+import React, { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams, Link } from "react-router-dom";
+import Book from "./Book";
 
 function BrowseBooks() {
-  const [searchName, setSearchName] = useState('');
-  const [searchCategory, setSearchCategory] = useState('');
+  const { category } = useParams(); // if route /books/:category
+  const books = useSelector((store) => store.book.items || []);
+  const [searchName, setSearchName] = useState("");
+  const [searchCategory, setSearchCategory] = useState(category || "");
 
-  const filteredBooks = booksData.filter((book) => {
-    const matchesName = book.name.toLowerCase().includes(searchName.toLowerCase());
-    const matchesCategory = book.category.toLowerCase().includes(searchCategory.toLowerCase());
-    return matchesName && matchesCategory;
-  });
+  // filter logic
+  const filtered = useMemo(() => {
+    return books.filter((b) => {
+      const nameMatch =
+        b.title.toLowerCase().includes(searchName.toLowerCase()) ||
+        b.author.toLowerCase().includes(searchName.toLowerCase());
+      const categoryMatch = searchCategory
+        ? b.genre.toLowerCase().includes(searchCategory.toLowerCase())
+        : true;
+      return nameMatch && categoryMatch;
+    });
+  }, [books, searchName, searchCategory]);
+
+  // group by genre
+  const grouped = useMemo(() => {
+    return filtered.reduce((acc, b) => {
+      const g = b.genre || "Uncategorized";
+      if (!acc[g]) acc[g] = [];
+      acc[g].push(b);
+      return acc;
+    }, {});
+  }, [filtered]);
+
+  const genres = Object.keys(grouped);
 
   return (
-    <div className="bg-black min-h-screen text-white">
+    <div className="bg-black min-h-screen text-white py-8 px-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-yellow-400">Browse Books</h1>
+          <p className="text-gray-300 mt-2">Search books by title, author or category.</p>
+        </div>
 
-      {/* Search Inputs */}
-      <div className="flex gap-4 my-6 px-6">
-        <input
-          type="text"
-          placeholder="Search by book name"
-          className="w-1/2 p-3 rounded border border-yellow-400 bg-black text-white placeholder-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Search by category"
-          className="w-1/2 p-3 rounded border border-yellow-400 bg-black text-white placeholder-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          value={searchCategory}
-          onChange={(e) => setSearchCategory(e.target.value)}
-        />
-      </div>
+        {/* Searches */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
+          <input
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            placeholder="Search by book title or author"
+            className="w-full sm:w-1/2 p-3 rounded border border-yellow-400 bg-black text-white placeholder-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+          <input
+            value={searchCategory}
+            onChange={(e) => setSearchCategory(e.target.value)}
+            placeholder="Search by category (or click a category link below)"
+            className="w-full sm:w-1/2 p-3 rounded border border-yellow-400 bg-black text-white placeholder-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+        </div>
 
-      {/* Books Display */}
-      <div className="px-6">
-        {filteredBooks.length > 0 ? (
-          filteredBooks.map((book) => (
-            <div
-              key={book.id}
-              className="my-6 p-4 border-l-4 border-yellow-400 bg-gray-900 rounded shadow-md"
+        {/* Quick category links */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          {[...new Set(books.map((b) => b.genre))].map((g) => (
+            <Link
+              key={g}
+              to={`/books/${encodeURIComponent(g)}`}
+              className="text-sm px-3 py-1 rounded bg-gray-900 border border-yellow-400 hover:bg-yellow-500 hover:text-black transition"
             >
-              <h2 className="text-yellow-400 font-bold text-xl mb-2">
-                Category - {book.category}
-              </h2>
-              <Book name={book.name} author={book.author} />
-            </div>
-          ))
+              {g}
+            </Link>
+          ))}
+          <Link
+            to="/browsebooks"
+            className="text-sm px-3 py-1 rounded bg-gray-900 border border-yellow-400 hover:bg-yellow-500 hover:text-black transition"
+          >
+            All
+          </Link>
+        </div>
+
+        {/* grouped display */}
+        {genres.length === 0 ? (
+          <p className="text-center text-yellow-400">No books found.</p>
         ) : (
-          <p className="text-yellow-400 text-lg mt-6">No books found</p>
+          genres.map((g) => (
+            <section key={g} className="mb-10">
+              <h2 className="text-2xl text-yellow-400 font-semibold mb-4 border-b border-yellow-400 inline-block">
+                {g}
+              </h2>
+
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {grouped[g].map((book) => (
+                  <Book key={book.id} book={book} />
+                ))}
+              </div>
+            </section>
+          ))
         )}
       </div>
     </div>

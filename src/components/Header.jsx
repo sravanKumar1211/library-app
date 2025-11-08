@@ -1,58 +1,21 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+
+import React from "react";
+import { NavLink } from "react-router-dom";
 
 function Header() {
+  const linkClass = ({ isActive }) =>
+    `px-3 py-2 rounded ${isActive ? "bg-yellow-500 text-black" : "text-white hover:text-yellow-400"}`;
+
   return (
-    <header className="bg-black border-b border-yellow-500 shadow-[0_2px_10px_rgba(255,215,0,0.15)]">
-      <nav className="flex justify-between items-center px-8 py-4">
-        {/* Logo Section */}
-        <Link to='/'>
-
-        <div className="flex items-center gap-3">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="#FFD700"
-            className="w-8 h-8"
-          >
-            <path d="M4 4h8a2 2 0 0 1 2 2v14a1 1 0 0 1-1.447.894L8 18.118l-4.553 2.776A1 1 0 0 1 2 20V6a2 2 0 0 1 2-2zm10 0h6a2 2 0 0 1 2 2v14a1 1 0 0 1-1.447.894L16 18.118l-4.553 2.776A1 1 0 0 1 10 20V6a2 2 0 0 1 2-2z" />
-          </svg>
-          <h1 className="text-white text-xl font-semibold tracking-wide">
-            Library<span className="text-yellow-400">Zone</span>
-          </h1>
-        </div>
-
-        </Link>
-        
-
-        {/* Navigation Links */}
-        <ul className="flex gap-8 text-white font-medium">
-          <li>
-            <Link
-              to="/"
-              className="hover:text-yellow-400 transition-colors duration-300"
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/browsebooks"
-              className="hover:text-yellow-400 transition-colors duration-300"
-            >
-              Browse Books
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/addbook"
-              className="hover:text-yellow-400 transition-colors duration-300"
-            >
-              Add Book
-            </Link>
-          </li>
-        </ul>
-      </nav>
+    <header className="bg-black border-b border-yellow-400">
+      <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
+        <div className="text-yellow-400 font-bold text-xl">BookZone</div>
+        <nav className="flex gap-3">
+          <NavLink to="/" className={linkClass}>Home</NavLink>
+          <NavLink to="/browsebooks" className={linkClass}>Browse Books</NavLink>
+          <NavLink to="/addbook" className={linkClass}>Add Book</NavLink>
+        </nav>
+      </div>
     </header>
   );
 }
