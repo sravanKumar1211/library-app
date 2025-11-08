@@ -9,7 +9,7 @@ function Header() {
   return (
     <header className="bg-black border-b border-yellow-400">
       <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
-        <div className="text-yellow-400 font-bold text-xl">BookZone</div>
+        <NavLink to='/'> <div className="text-yellow-400 font-bold text-xl">BookZone</div></NavLink>
         <nav className="flex gap-3">
           <NavLink to="/" className={linkClass}>Home</NavLink>
           <NavLink to="/browsebooks" className={linkClass}>Browse Books</NavLink>
