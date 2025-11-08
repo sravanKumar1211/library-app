@@ -1,13 +1,18 @@
-// src/components/AddBook.jsx
 import React, { useState } from "react";
+// useDispatch allows dispatching Redux actions
 import { useDispatch } from "react-redux";
+// Import the addBook action from the book slice
 import { addBook } from "../utils/bookSlice";
+// useNavigate allows programmatic navigation between routes
 import { useNavigate } from "react-router-dom";
 
 function AddBook() {
+  // Initialize Redux dispatch
   const dispatch = useDispatch();
+  // Initialize navigation
   const navigate = useNavigate();
 
+  // Form state to hold all input values
   const [form, setForm] = useState({
     title: "",
     author: "",
@@ -19,10 +24,13 @@ function AddBook() {
     description: ""
   });
 
+  // State to hold validation error messages
   const [errors, setErrors] = useState({});
 
+  // Handle input changes for all fields dynamically
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Validation function to check all inputs
   const validate = () => {
     const e = {};
     if (!form.title) e.title = "Title required";
@@ -37,18 +45,20 @@ function AddBook() {
     return e;
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const v = validate();
+    e.preventDefault(); // Prevent default page reload
+    const v = validate(); // Run validation
     if (Object.keys(v).length) {
+      // If there are errors, update the errors state and stop submission
       setErrors(v);
       return;
     }
-    setErrors({});
+    setErrors({}); // Clear previous errors
 
-    // Create unique id (simple approach)
+    // Create a new book object with a unique id
     const newBook = {
-      id: Date.now(),
+      id: Date.now(), // simple unique id using timestamp
       title: form.title,
       author: form.author,
       year: Number(form.year),
@@ -59,22 +69,25 @@ function AddBook() {
       description: form.description
     };
 
+    // Dispatch the addBook action to update Redux store
     dispatch(addBook(newBook));
-    // redirect to browsebooks and scroll to top
+
+    // Navigate to the browse books page after adding
     navigate("/browsebooks");
   };
 
   return (
+    // Container div to center form and apply styles
     <div className="bg-black min-h-screen text-white flex justify-center items-start p-6">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit} // Form submission handler
         className="w-full max-w-5xl bg-[#111111] p-6 rounded-xl border border-yellow-400 overflow-auto"
-        style={{ maxHeight: "95vh" }}
+        style={{ maxHeight: "95vh" }} // Prevent form from overflowing the screen
       >
         <h1 className="text-2xl text-yellow-400 font-bold text-center mb-6">Add New Book</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left 3 */}
+          {/* Left column: Title, Author, Year */}
           <div className="flex flex-col gap-4">
             <div>
               <label className="text-yellow-400 font-semibold block mb-1">Title</label>
@@ -98,7 +111,7 @@ function AddBook() {
             </div>
           </div>
 
-          {/* Right 3 */}
+          {/* Right column: Genre, Pages, Rating */}
           <div className="flex flex-col gap-4">
             <div>
               <label className="text-yellow-400 font-semibold block mb-1">Genre</label>
@@ -123,7 +136,7 @@ function AddBook() {
           </div>
         </div>
 
-        {/* description full width */}
+        {/* Image URL input */}
         <div className="mt-6">
           <label className="text-yellow-400 font-semibold block mb-1">Image URL</label>
           <input name="imageUrl" value={form.imageUrl} onChange={handleChange}
@@ -131,6 +144,7 @@ function AddBook() {
           {errors.imageUrl && <p className="text-red-500">{errors.imageUrl}</p>}
         </div>
 
+        {/* Description input */}
         <div className="mt-4">
           <label className="text-yellow-400 font-semibold block mb-1">Description</label>
           <textarea name="description" value={form.description} onChange={handleChange} rows="4"
@@ -138,6 +152,7 @@ function AddBook() {
           {errors.description && <p className="text-red-500">{errors.description}</p>}
         </div>
 
+        {/* Submit button */}
         <button type="submit" className="mt-6 w-full bg-yellow-400 text-black font-bold py-3 rounded hover:bg-yellow-500 transition">
           Add Book
         </button>
@@ -146,4 +161,5 @@ function AddBook() {
   );
 }
 
+// Export AddBook component
 export default AddBook;
