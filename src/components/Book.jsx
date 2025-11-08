@@ -25,6 +25,7 @@ function Book({ book }) {
         <h3 className="text-base font-semibold text-white mb-1">{book.title}</h3>
         <p className="text-sm text-gray-400 italic mb-1">{book.author}</p>
         <p className="text-xs text-yellow-400">{book.genre}</p>
+        <p className="text-xs text-yellow-400">Click To View Details"</p>
       </div>
     </div>
   );
